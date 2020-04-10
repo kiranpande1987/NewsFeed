@@ -17,26 +17,24 @@ import com.kprights.infosys.newsfeed.view.custom.NewsFeedListItem
  * Time : 4:55 PM
  */
 
-class NewsFeedListAdapter(private val listOfNews: List<News>): ListAdapter<News, NewsFeedListItem>(NewsFeedDiffCallback())  //: RecyclerView.Adapter<NewsFeedListItem>()
+class NewsFeedListAdapter(): ListAdapter<News, NewsFeedListItem>(NewsFeedDiffCallback())  //: RecyclerView.Adapter<NewsFeedListItem>()
 {
     // To create News Feed List Item View
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = NewsFeedListItem.from(parent)
 
-    // Get Total number of News from @listOfNews
-    override fun getItemCount() = listOfNews.size
-
     // Bind Single News to NewsListItem
-    override fun onBindViewHolder(holder: NewsFeedListItem, position: Int) = holder.bind(listOfNews[position])
+    override fun onBindViewHolder(holder: NewsFeedListItem, position: Int) = holder.bind(getItem(position))
+
+    // New Difference Callback : To check differences between old list and new list of News.
+    class NewsFeedDiffCallback: DiffUtil.ItemCallback<News>()
+    {
+        override fun areItemsTheSame(oldItem: News, newItem: News): Boolean {
+            return oldItem.strTitle == newItem.strTitle
+        }
+
+        override fun areContentsTheSame(oldItem: News, newItem: News): Boolean {
+            return oldItem == newItem
+        }
+    }
 }
 
-// New Difference Callback : To check differences between old list and new list of News.
-class NewsFeedDiffCallback: DiffUtil.ItemCallback<News>()
-{
-    override fun areItemsTheSame(oldItem: News, newItem: News): Boolean {
-        return oldItem.strTitle == newItem.strTitle
-    }
-
-    override fun areContentsTheSame(oldItem: News, newItem: News): Boolean {
-        return oldItem == newItem
-    }
-}
