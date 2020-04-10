@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName
  */
 
 data class News(
-    @SerializedName("title") val strTitle : String,
-    @SerializedName("description") val strDescription : String,
-    @SerializedName("imageHref") val strImageUrl : String
+    @SerializedName("title") val strTitle : String = "",
+    @SerializedName("description") val strDescription : String = "",
+    @SerializedName("imageHref") val strImageUrl : String = ""
 )

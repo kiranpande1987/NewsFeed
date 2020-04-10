@@ -12,6 +12,6 @@ import com.google.gson.annotations.SerializedName
  */
 
 data class NewsFeed(
-    @SerializedName("title") val strTitle : String,
-    @SerializedName("rows") val listOfNews : List<News>
+    @SerializedName("title") val strTitle : String = "",
+    @SerializedName("rows") val listOfNews : List<News> = listOf<News>()
 )

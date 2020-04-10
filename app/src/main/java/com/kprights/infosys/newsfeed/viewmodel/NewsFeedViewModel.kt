@@ -26,6 +26,8 @@ import kotlinx.coroutines.launch
 
 class NewsFeedViewModel() : ViewModel()
 {
+    enum class ApiStatus { LOADING, ERROR, DONE }
+
     private val _newsFeed = MutableLiveData<NewsFeed>()
     val newsFeed: LiveData<NewsFeed>
         get() = _newsFeed
@@ -33,6 +35,10 @@ class NewsFeedViewModel() : ViewModel()
     private val _newsTitle = MutableLiveData<String>()
     val newsTitle: LiveData<String>
         get() = _newsTitle
+
+    private val _status = MutableLiveData<ApiStatus>()
+    val status: LiveData<ApiStatus>
+        get() = _status
 
     private val job = Job()
     private val scope = CoroutineScope(job + Dispatchers.Main)
@@ -46,8 +52,18 @@ class NewsFeedViewModel() : ViewModel()
     {
         scope.launch {
             val deferred = WebService.getNewsFeed()
-            _newsFeed.value =  deferred.await()
-            _newsTitle.value = _newsFeed.value!!.strTitle
+
+            try
+            {
+                _status.value = ApiStatus.LOADING
+                val result =  deferred.await()
+                _status.value = ApiStatus.DONE
+                _newsFeed.value =  result
+                _newsTitle.value = result.strTitle
+            } catch (e: Exception) {
+                _status.value = ApiStatus.ERROR
+                _newsFeed.value = NewsFeed()
+            }
         }
     }
 
