@@ -2,6 +2,7 @@ package com.kprights.infosys.newsfeed.view.fragment
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.kprights.infosys.newsfeed.model.News
 import com.kprights.infosys.newsfeed.view.custom.NewsFeedListItem
 
 
@@ -13,18 +14,14 @@ import com.kprights.infosys.newsfeed.view.custom.NewsFeedListItem
  * Time : 4:55 PM
  */
 
-class NewsFeedListAdapter: RecyclerView.Adapter<NewsFeedListItem>()
+class NewsFeedListAdapter(private val listOfNews: List<News>): RecyclerView.Adapter<NewsFeedListItem>()
 {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsFeedListItem {
-        TODO("Not yet implemented")
-    }
+    // To create News Feed List Item View
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = NewsFeedListItem.from(parent)
 
-    override fun getItemCount(): Int {
-        TODO("Not yet implemented")
-    }
+    // Get Total number of News from @listOfNews
+    override fun getItemCount() = listOfNews.size
 
-    override fun onBindViewHolder(holder: NewsFeedListItem, position: Int) {
-        TODO("Not yet implemented")
-    }
-
+    // Bind Single News to NewsListItem
+    override fun onBindViewHolder(holder: NewsFeedListItem, position: Int) = holder.bind(listOfNews[position])
 }
