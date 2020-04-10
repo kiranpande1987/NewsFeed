@@ -26,8 +26,6 @@ class NewsFeedListItem(private val binding: NewsFeedListItemBinding) : RecyclerV
 {
     fun bind(item: News) {
         binding.news = item
-
-//        binding.clickListener = clickListener
         binding.executePendingBindings()
     }
 
@@ -42,7 +40,7 @@ class NewsFeedListItem(private val binding: NewsFeedListItemBinding) : RecyclerV
 
         @BindingAdapter("bindImage")
         @JvmStatic
-        fun bindImage(imageViewForNewsFeed: ImageView, imageUrl: String) {
+        fun bindImage(imageViewForNewsFeed: ImageView, imageUrl: String?) {
             imageUrl?.let {
                 val imgUri = imageUrl.toUri().buildUpon().scheme("http").build()
                 Glide.with(imageViewForNewsFeed.context)
