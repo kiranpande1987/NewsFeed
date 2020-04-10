@@ -3,7 +3,13 @@ package com.kprights.infosys.newsfeed.view.custom
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.net.toUri
+import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.kprights.infosys.newsfeed.R
 import com.kprights.infosys.newsfeed.databinding.NewsFeedListItemBinding
 import com.kprights.infosys.newsfeed.model.News
 
@@ -22,7 +28,7 @@ class NewsFeedListItem(private val binding: NewsFeedListItemBinding) : RecyclerV
         binding.news = item
 
 //        binding.clickListener = clickListener
-//        binding.executePendingBindings()
+        binding.executePendingBindings()
     }
 
     companion object
@@ -32,6 +38,21 @@ class NewsFeedListItem(private val binding: NewsFeedListItemBinding) : RecyclerV
             val layoutInflater = LayoutInflater.from(parent.context)
             val binding = NewsFeedListItemBinding.inflate(layoutInflater, parent, false)
             return NewsFeedListItem(binding)
+        }
+
+        @BindingAdapter("bindImage")
+        @JvmStatic
+        fun bindImage(imageViewForNewsFeed: ImageView, imageUrl: String) {
+            imageUrl?.let {
+                val imgUri = imageUrl.toUri().buildUpon().scheme("http").build()
+                Glide.with(imageViewForNewsFeed.context)
+                    .load(imgUri)
+                    .apply(
+                        RequestOptions()
+                        .placeholder(R.drawable.loading_animation)
+                        .error(R.drawable.ic_broken_image))
+                    .into(imageViewForNewsFeed)
+            }
         }
     }
 }

@@ -24,6 +24,10 @@ android {
         }
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     // Enables data binding.
     dataBinding {
         enabled = true
