@@ -1,19 +1,12 @@
 package com.kprights.infosys.newsfeed.viewmodel
 
-import android.app.Application
-import androidx.databinding.BindingAdapter
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.RecyclerView
+import com.kprights.infosys.newsfeed.common.NewsFeedDao
 import com.kprights.infosys.newsfeed.common.WebService
-import com.kprights.infosys.newsfeed.model.News
 import com.kprights.infosys.newsfeed.model.NewsFeed
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 /**
@@ -40,6 +33,8 @@ class NewsFeedViewModel() : ViewModel()
     val status: LiveData<ApiStatus>
         get() = _status
 
+    var database: NewsFeedDao? = null
+
     private val job = Job()
     private val scope = CoroutineScope(job + Dispatchers.Main)
 
@@ -60,9 +55,19 @@ class NewsFeedViewModel() : ViewModel()
                 _status.value = ApiStatus.DONE
                 _newsFeed.value =  result
                 _newsTitle.value = result.strTitle
+                insertToDatabase(result)
             } catch (e: Exception) {
                 _status.value = ApiStatus.ERROR
                 _newsFeed.value = NewsFeed()
+            }
+        }
+    }
+
+    private suspend fun insertToDatabase(result: NewsFeed)
+    {
+        withContext(Dispatchers.IO) {
+            for (news in result.listOfNews) {
+                database?.insert(news)
             }
         }
     }
@@ -71,4 +76,6 @@ class NewsFeedViewModel() : ViewModel()
         super.onCleared()
         job.cancel()
     }
+
+
 }

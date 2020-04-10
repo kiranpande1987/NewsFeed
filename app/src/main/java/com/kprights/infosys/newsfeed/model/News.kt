@@ -1,5 +1,7 @@
 package com.kprights.infosys.newsfeed.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 
@@ -11,8 +13,11 @@ import com.google.gson.annotations.SerializedName
  * Time : 5:37 PM
  */
 
+@Entity
 data class News(
-    @SerializedName("title") val strTitle : String = "",
-    @SerializedName("description") val strDescription : String = "",
-    @SerializedName("imageHref") val strImageUrl : String = ""
+    @PrimaryKey(autoGenerate = true)
+    var id: Long = 0L,
+    @SerializedName("title") val strTitle : String? = "",
+    @SerializedName("description") val strDescription : String? = "",
+    @SerializedName("imageHref") val strImageUrl : String? = ""
 )

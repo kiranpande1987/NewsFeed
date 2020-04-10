@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import com.kprights.infosys.newsfeed.common.DatabaseService
 import com.kprights.infosys.newsfeed.databinding.FragmentNewsFeedBinding
 import com.kprights.infosys.newsfeed.viewmodel.NewsFeedViewModel
 
@@ -35,6 +35,10 @@ class NewsFeedFragment: Fragment()
 
         // Giving the binding access to the OverviewViewModel
         binding.viewModel = viewModel
+
+        // Set Database Access Object for NewsFeed
+        val application = requireNotNull(this.activity).application
+        viewModel.database = DatabaseService.getInstance(application).newsFeedDao
 
         binding.recyclerViewForNewsFeed.adapter = NewsFeedListAdapter()//(PhotoGridAdapter.OnClickListener { viewModel.displayPropertyDetails(it)})
 
