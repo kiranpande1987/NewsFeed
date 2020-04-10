@@ -30,6 +30,10 @@ class NewsFeedViewModel() : ViewModel()
     val newsFeed: LiveData<NewsFeed>
         get() = _newsFeed
 
+    private val _newsTitle = MutableLiveData<String>()
+    val newsTitle: LiveData<String>
+        get() = _newsTitle
+
     private val job = Job()
     private val scope = CoroutineScope(job + Dispatchers.Main)
 
@@ -43,6 +47,7 @@ class NewsFeedViewModel() : ViewModel()
         scope.launch {
             val deferred = WebService.getNewsFeed()
             _newsFeed.value =  deferred.await()
+            _newsTitle.value = _newsFeed.value!!.strTitle
         }
     }
 
