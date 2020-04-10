@@ -8,10 +8,11 @@ import com.google.gson.annotations.SerializedName
  *
  * User : Kiran Pande
  * Date : 10/04/20
- * Time : 4:56 PM
+ * Time : 5:37 PM
  */
 
-data class NewsFeed(
+data class News(
     @SerializedName("title") val strTitle : String,
-    @SerializedName("rows") val listOfNews : List<News>
+    @SerializedName("description") val strDescription : String,
+    @SerializedName("imageHref") val strImageUrl : String
 )
