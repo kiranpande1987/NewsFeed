@@ -12,7 +12,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#E1F5FE">
+        android:paddingBottom="8dp"
+        android:background="@drawable/bottom_line_for_list_item">
 
         <TextView
             android:id="@+id/textViewTitle"
@@ -22,6 +23,7 @@
             android:layout_marginTop="8dp"
             android:text="@{news.strTitle}"
             android:textColor="@android:color/holo_blue_light"
+            android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/imageViewNext"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -30,11 +32,10 @@
             android:id="@+id/imageViewForNewsFeed"
             android:layout_width="100dp"
             android:layout_height="70dp"
-            android:layout_marginTop="8dp"
             app:bindImage="@{news.strImageUrl}"
             app:layout_constraintEnd_toStartOf="@+id/imageViewNext"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTitle"
-            app:srcCompat="@drawable/ic_launcher_background" />
+            app:layout_constraintTop_toTopOf="@id/textViewDescription"
+            app:srcCompat="@drawable/ic_broken_image" />
 
         <ImageView
             android:id="@+id/imageViewNext"
@@ -54,6 +55,7 @@
             android:layout_marginEnd="8dp"
             android:text="@{news.strDescription}"
             android:textColor="@android:color/black"
+            android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/imageViewForNewsFeed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
