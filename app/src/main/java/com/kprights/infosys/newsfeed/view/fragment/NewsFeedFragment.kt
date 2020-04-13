@@ -39,6 +39,7 @@ class NewsFeedFragment: Fragment()
         // Set Database Access Object for NewsFeed
         val application = requireNotNull(this.activity).application
         viewModel.database = DatabaseService.getInstance(application).newsFeedDao
+        viewModel.set(viewLifecycleOwner, DatabaseService.getInstance(application).newsFeedDao)
 
         binding.recyclerViewForNewsFeed.adapter = NewsFeedListAdapter()//(PhotoGridAdapter.OnClickListener { viewModel.displayPropertyDetails(it)})
 

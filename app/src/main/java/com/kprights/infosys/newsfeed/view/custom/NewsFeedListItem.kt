@@ -1,7 +1,6 @@
 package com.kprights.infosys.newsfeed.view.custom
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.net.toUri
@@ -43,6 +42,7 @@ class NewsFeedListItem(private val binding: NewsFeedListItemBinding) : RecyclerV
         fun bindImage(imageViewForNewsFeed: ImageView, imageUrl: String?) {
             imageUrl?.let {
                 val imgUri = imageUrl.toUri().buildUpon().scheme("http").build()
+
                 Glide.with(imageViewForNewsFeed.context)
                     .load(imgUri)
                     .apply(

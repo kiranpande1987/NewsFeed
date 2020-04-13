@@ -1,12 +1,11 @@
 package com.kprights.infosys.newsfeed.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.kprights.infosys.newsfeed.common.NewsFeedDao
-import com.kprights.infosys.newsfeed.common.WebService
 import com.kprights.infosys.newsfeed.model.NewsFeed
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 
 
 /**
@@ -34,48 +33,40 @@ class NewsFeedViewModel() : ViewModel()
         get() = _status
 
     var database: NewsFeedDao? = null
+    var newsFeedRepository: NewsFeedRepository? = null
 
     private val job = Job()
     private val scope = CoroutineScope(job + Dispatchers.Main)
 
-    init
+    fun set(lifecycleOwner: LifecycleOwner, database: NewsFeedDao)
     {
-        getNewsFeedFromWeb()
-    }
+        newsFeedRepository = NewsFeedRepository(database)
+        newsFeedRepository!!.data.observe(lifecycleOwner, Observer {
+                newsFeed -> update(newsFeed)
+        })
 
-    private fun getNewsFeedFromWeb()
-    {
-        scope.launch {
-            val deferred = WebService.getNewsFeed()
+        try {
+            _status.value = ApiStatus.LOADING
 
-            try
-            {
-                _status.value = ApiStatus.LOADING
-                val result =  deferred.await()
-                _status.value = ApiStatus.DONE
-                _newsFeed.value =  result
-                _newsTitle.value = result.strTitle
-                insertToDatabase(result)
-            } catch (e: Exception) {
-                _status.value = ApiStatus.ERROR
-                _newsFeed.value = NewsFeed()
-            }
+            // Single Source Of Truth : Function to get NewsFeed for ViewModel.
+            newsFeedRepository!!.getNewsFeedFeed()
+        }
+        catch (e: Exception)
+        {
+            _newsFeed.value = NewsFeed()
+            _status.value = ApiStatus.ERROR
         }
     }
 
-    private suspend fun insertToDatabase(result: NewsFeed)
+    private fun update(newsFeed: NewsFeed)
     {
-        withContext(Dispatchers.IO) {
-            for (news in result.listOfNews) {
-                database?.insert(news)
-            }
-        }
+        _newsFeed.value = newsFeed
+        _newsTitle.value = _newsFeed.value!!.strTitle
+        _status.value = ApiStatus.DONE
     }
 
     override fun onCleared() {
         super.onCleared()
         job.cancel()
     }
-
-
 }

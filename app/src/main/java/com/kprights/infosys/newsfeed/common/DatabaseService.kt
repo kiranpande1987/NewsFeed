@@ -59,6 +59,6 @@ interface NewsFeedDao
     @Query("DELETE FROM news")
     fun clear()
 
-    @Query("SELECT * FROM news ORDER BY Id DESC")
+    @Query("SELECT * FROM news")
     fun getAll(): LiveData<List<News>>
 }
