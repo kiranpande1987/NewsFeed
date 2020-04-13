@@ -20,8 +20,6 @@ class NewsDetailFragment: Fragment()
 {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        @Suppress("UNUSED_VARIABLE")
-        val application = requireNotNull(activity).application
         val binding = NewsDetailFragmentBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
