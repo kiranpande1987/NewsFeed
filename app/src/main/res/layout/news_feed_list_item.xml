@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
         <variable
             name="news"
             type="com.kprights.infosys.newsfeed.model.News" />
+        <variable
+            name="onClickListener"
+            type="com.kprights.infosys.newsfeed.view.fragment.NewsFeedListAdapter.OnClickListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="8dp"
+        android:onClick="@{() -> onClickListener.onClick(news)}"
         android:background="@drawable/bottom_line_for_list_item">
 
         <TextView
@@ -32,7 +35,7 @@
             android:id="@+id/imageViewForNewsFeed"
             android:layout_width="100dp"
             android:layout_height="70dp"
-            app:bindImage="@{news.strImageUrl}"
+            app:showImage="@{news.strImageUrl}"
             app:layout_constraintEnd_toStartOf="@+id/imageViewNext"
             app:layout_constraintTop_toTopOf="@id/textViewDescription"
             app:srcCompat="@drawable/ic_broken_image" />

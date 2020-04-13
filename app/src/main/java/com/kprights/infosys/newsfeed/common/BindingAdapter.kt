@@ -6,7 +6,6 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.kprights.infosys.newsfeed.R
 import com.kprights.infosys.newsfeed.model.News
-import com.kprights.infosys.newsfeed.model.NewsFeed
 import com.kprights.infosys.newsfeed.view.fragment.NewsFeedListAdapter
 import com.kprights.infosys.newsfeed.viewmodel.NewsFeedViewModel
 

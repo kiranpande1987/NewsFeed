@@ -1,8 +1,10 @@
 package com.kprights.infosys.newsfeed.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 
 /**
@@ -14,10 +16,11 @@ import com.google.gson.annotations.SerializedName
  */
 
 @Entity
+@Parcelize
 data class News(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
     @SerializedName("title") val strTitle : String? = "",
     @SerializedName("description") val strDescription : String? = "",
     @SerializedName("imageHref") val strImageUrl : String? = ""
-)
+) : Parcelable

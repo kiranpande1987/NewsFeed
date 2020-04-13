@@ -11,6 +11,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.kprights.infosys.newsfeed.R
 import com.kprights.infosys.newsfeed.databinding.NewsFeedListItemBinding
 import com.kprights.infosys.newsfeed.model.News
+import com.kprights.infosys.newsfeed.view.fragment.NewsFeedListAdapter
 
 
 /**
@@ -23,8 +24,9 @@ import com.kprights.infosys.newsfeed.model.News
 
 class NewsFeedListItem(private val binding: NewsFeedListItemBinding) : RecyclerView.ViewHolder(binding.root)
 {
-    fun bind(item: News) {
+    fun bind(item: News, onClickListener: NewsFeedListAdapter.OnClickListener) {
         binding.news = item
+        binding.onClickListener = onClickListener
         binding.executePendingBindings()
     }
 
@@ -37,9 +39,9 @@ class NewsFeedListItem(private val binding: NewsFeedListItemBinding) : RecyclerV
             return NewsFeedListItem(binding)
         }
 
-        @BindingAdapter("bindImage")
+        @BindingAdapter("showImage")
         @JvmStatic
-        fun bindImage(imageViewForNewsFeed: ImageView, imageUrl: String?) {
+        fun showImage(imageViewForNewsFeed: ImageView, imageUrl: String?) {
             imageUrl?.let {
                 val imgUri = imageUrl.toUri().buildUpon().scheme("http").build()
 
@@ -47,8 +49,8 @@ class NewsFeedListItem(private val binding: NewsFeedListItemBinding) : RecyclerV
                     .load(imgUri)
                     .apply(
                         RequestOptions()
-                        .placeholder(R.drawable.loading_animation)
-                        .error(R.drawable.ic_broken_image))
+                            .placeholder(R.drawable.loading_animation)
+                            .error(R.drawable.ic_broken_image))
                     .into(imageViewForNewsFeed)
             }
         }
