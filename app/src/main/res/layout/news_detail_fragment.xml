@@ -14,11 +14,11 @@
 
         <ImageView
             android:id="@+id/imageViewForNews"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/image_detail_height"
+            android:layout_marginStart="@dimen/horizontal_spacing"
+            android:layout_marginTop="@dimen/vertical_spacing"
+            android:layout_marginEnd="@dimen/horizontal_spacing"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.545"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,26 +28,26 @@
 
         <TextView
             android:id="@+id/textViewForTitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="@dimen/horizontal_spacing"
+            android:layout_marginTop="@dimen/vertical_spacing"
             android:text="@{news.strTitle}"
             android:textColor="@android:color/holo_blue_light"
-            android:textSize="18sp"
+            android:textSize="@dimen/title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageViewForNews" />
 
         <TextView
             android:id="@+id/textViewForDescription"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/horizontal_spacing"
+            android:layout_marginTop="@dimen/vertical_spacing"
+            android:layout_marginEnd="@dimen/horizontal_spacing"
             android:text="@{news.strDescription}"
             android:textColor="@android:color/black"
-            android:textSize="14sp"
+            android:textSize="@dimen/description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewForTitle" />

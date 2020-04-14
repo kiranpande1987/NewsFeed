@@ -47,9 +47,16 @@ class NewsFeedRepository(val database: NewsFeedDao)
     {
         scope.launch {
             val deferred = WebService.getNewsFeed()
-            val result =  deferred.await()
-            data.value = result
-            insertToDatabase(result)
+
+            try {
+                val result =  deferred.await()
+                data.value = result
+                insertToDatabase(result)
+            }
+            catch (e: Exception)
+            {
+                data.value = NewsFeed().apply { strTitle = "Error" }
+            }
         }
     }
 

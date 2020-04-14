@@ -16,8 +16,13 @@ import kotlinx.coroutines.Job
  * Time : 4:57 PM
  */
 
-class NewsFeedViewModel() : ViewModel()
+class NewsFeedViewModel(
+    val lifecycleOwner: LifecycleOwner,
+    database: NewsFeedDao
+) : ViewModel()
 {
+    private var newsFeedRepository: NewsFeedRepository = NewsFeedRepository(database)
+
     enum class ApiStatus { LOADING, ERROR, DONE }
 
     private val _newsFeed = MutableLiveData<NewsFeed>()
@@ -32,16 +37,16 @@ class NewsFeedViewModel() : ViewModel()
     val status: LiveData<ApiStatus>
         get() = _status
 
-    var database: NewsFeedDao? = null
-    var newsFeedRepository: NewsFeedRepository? = null
-
     private val job = Job()
     private val scope = CoroutineScope(job + Dispatchers.Main)
 
-    fun set(lifecycleOwner: LifecycleOwner, database: NewsFeedDao)
+    init {
+        getNewsFeedFromRepository()
+    }
+
+    private fun getNewsFeedFromRepository()
     {
-        newsFeedRepository = NewsFeedRepository(database)
-        newsFeedRepository!!.data.observe(lifecycleOwner, Observer {
+        newsFeedRepository.data.observe(lifecycleOwner, Observer {
                 newsFeed -> update(newsFeed)
         })
 
@@ -49,7 +54,7 @@ class NewsFeedViewModel() : ViewModel()
             _status.value = ApiStatus.LOADING
 
             // Single Source Of Truth : Function to get NewsFeed for ViewModel.
-            newsFeedRepository!!.getNewsFeedFeed()
+            newsFeedRepository.getNewsFeedFeed()
         }
         catch (e: Exception)
         {
@@ -60,9 +65,17 @@ class NewsFeedViewModel() : ViewModel()
 
     private fun update(newsFeed: NewsFeed)
     {
-        _newsFeed.value = newsFeed
-        _newsTitle.value = _newsFeed.value!!.strTitle
-        _status.value = ApiStatus.DONE
+        if(newsFeed.strTitle.equals("Error"))
+        {
+            _newsFeed.value = NewsFeed()
+            _status.value = ApiStatus.ERROR
+        }
+        else
+        {
+            _newsFeed.value = newsFeed
+            _newsTitle.value = _newsFeed.value!!.strTitle
+            _status.value = ApiStatus.DONE
+        }
     }
 
     override fun onCleared() {

@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.kprights.infosys.newsfeed.common.DatabaseService
 import com.kprights.infosys.newsfeed.databinding.FragmentNewsFeedBinding
 import com.kprights.infosys.newsfeed.viewmodel.NewsFeedViewModel
+import com.kprights.infosys.newsfeed.viewmodel.NewsFeedViewModelFactory
 
 
 /**
@@ -23,10 +24,6 @@ import com.kprights.infosys.newsfeed.viewmodel.NewsFeedViewModel
 
 class NewsFeedFragment: Fragment()
 {
-    private val viewModel: NewsFeedViewModel by lazy {
-        ViewModelProvider(this).get(NewsFeedViewModel::class.java)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val binding = FragmentNewsFeedBinding.inflate(inflater)
@@ -34,13 +31,13 @@ class NewsFeedFragment: Fragment()
         // Allows Data Binding to Observe LiveData with the lifecycle of this Fragment
         binding.lifecycleOwner = this
 
-        // Giving the binding access to the ViewModel
-        binding.viewModel = viewModel
-
         // Set Database Access Object for NewsFeed
         val application = requireNotNull(this.activity).application
-        viewModel.database = DatabaseService.getInstance(application).newsFeedDao
-        viewModel.set(viewLifecycleOwner, DatabaseService.getInstance(application).newsFeedDao)
+        val newsFeedViewModelFactory = NewsFeedViewModelFactory(this, DatabaseService.getInstance(application).newsFeedDao)
+        val viewModel = ViewModelProvider(this, newsFeedViewModelFactory).get(NewsFeedViewModel::class.java)
+
+        // Giving the binding access to the ViewModel
+        binding.viewModel = viewModel
 
         binding.recyclerViewForNewsFeed.adapter = NewsFeedListAdapter(NewsFeedListAdapter.OnClickListener {
                 this.findNavController().navigate(NewsFeedFragmentDirections.actionShowDetail(it))
