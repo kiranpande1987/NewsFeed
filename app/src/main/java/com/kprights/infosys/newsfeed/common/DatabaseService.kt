@@ -60,5 +60,5 @@ interface NewsFeedDao
     fun clear()
 
     @Query("SELECT * FROM news")
-    fun getAll(): LiveData<List<News>>
+    fun getAllNews(): LiveData<List<News>>
 }

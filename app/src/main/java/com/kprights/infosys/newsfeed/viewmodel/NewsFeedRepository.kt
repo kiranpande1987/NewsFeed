@@ -1,8 +1,10 @@
 package com.kprights.infosys.newsfeed.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.kprights.infosys.newsfeed.common.NewsFeedDao
 import com.kprights.infosys.newsfeed.common.WebService
+import com.kprights.infosys.newsfeed.model.News
 import com.kprights.infosys.newsfeed.model.NewsFeed
 import kotlinx.coroutines.*
 
@@ -21,6 +23,7 @@ class NewsFeedRepository(val database: NewsFeedDao)
     private val scope = CoroutineScope(job + Dispatchers.Main)
 
     val data: MutableLiveData<NewsFeed> = MutableLiveData<NewsFeed>()
+    private val allNews = database.getAllNews();
 
     // Single Source Of Truth : Function to get NewsFeed for ViewModel.
     fun getNewsFeedFeed()
@@ -33,13 +36,18 @@ class NewsFeedRepository(val database: NewsFeedDao)
         //getNewsFeedFromDatabase() This is NOT working as expected.
 
         getNewsFeedFromWeb()
+        //getNewsFeedFromDatabase()
     }
 
     // This function retrieves NewsFeed from Local Database
     private fun getNewsFeedFromDatabase()
     {
-        val allNews = database.getAll()
-        data.value!!.listOfNews = allNews.value!!
+        val newsFeed = NewsFeed()
+        val list = allNews.value
+
+        newsFeed.listOfNews = list ?: listOf<News>()
+        Log.e("ListSize : ", ""+newsFeed.listOfNews.size)
+        data.value = newsFeed
     }
 
     // This function retrieves NewsFeed list and insert into database.
@@ -52,6 +60,7 @@ class NewsFeedRepository(val database: NewsFeedDao)
                 val result =  deferred.await()
                 data.value = result
                 insertToDatabase(result)
+                //getNewsFeedFromDatabase()
             }
             catch (e: Exception)
             {

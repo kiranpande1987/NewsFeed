@@ -15,8 +15,8 @@ import kotlinx.android.parcel.Parcelize
  * Time : 5:37 PM
  */
 
-@Entity
 @Parcelize
+@Entity
 data class News(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
