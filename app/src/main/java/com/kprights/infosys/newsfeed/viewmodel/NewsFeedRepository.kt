@@ -1,13 +1,12 @@
 package com.kprights.infosys.newsfeed.viewmodel
 
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import com.kprights.infosys.newsfeed.common.NewsFeedDao
-import com.kprights.infosys.newsfeed.common.WebService
 import com.kprights.infosys.newsfeed.model.News
 import com.kprights.infosys.newsfeed.model.NewsFeed
 import kotlinx.coroutines.*
-
+import timber.log.Timber
 
 /**
  * Copyright (c) 2020 for KPrights
@@ -17,65 +16,57 @@ import kotlinx.coroutines.*
  * Time : 11:20 AM
  */
 
-class NewsFeedRepository(val database: NewsFeedDao)
+class NewsFeedRepository(database: NewsFeedDao)
 {
+    private val localDataSource = LocalDataSource(database)
+    private val remoteDataSource = RemoteDataSource()
+
     private val job = Job()
     private val scope = CoroutineScope(job + Dispatchers.Main)
 
-    val data: MutableLiveData<NewsFeed> = MutableLiveData<NewsFeed>()
-    private val allNews = database.getAllNews();
-
-    // Single Source Of Truth : Function to get NewsFeed for ViewModel.
-    fun getNewsFeedFeed()
-    {
-        // Check for Local Database for NewsFeed and send it to ViewModel.
-        // Check Web for updated NewsFeed
-        // Insert updated NewsFeed into Local Database
-        // Update ViewModel with latest NewsFeed from Local Database.
-
-        //getNewsFeedFromDatabase() This is NOT working as expected.
-
-        getNewsFeedFromWeb()
-        //getNewsFeedFromDatabase()
+    private var forceUpdate: Boolean = true
+    val newsFeed: LiveData<NewsFeed> = Transformations.map(localDataSource.getAllNews()){
+            list -> updateData(list)
     }
 
-    // This function retrieves NewsFeed from Local Database
-    private fun getNewsFeedFromDatabase()
-    {
-        val newsFeed = NewsFeed()
-        val list = allNews.value
-
-        newsFeed.listOfNews = list ?: listOf<News>()
-        Log.e("ListSize : ", ""+newsFeed.listOfNews.size)
-        data.value = newsFeed
-    }
-
-    // This function retrieves NewsFeed list and insert into database.
-    private fun getNewsFeedFromWeb()
+    private fun updateData(list: List<News>) : NewsFeed
     {
         scope.launch {
-            val deferred = WebService.getNewsFeed()
+            updateDataFromRemoteDataSource()
+        }
 
-            try {
-                val result =  deferred.await()
-                data.value = result
-                insertToDatabase(result)
-                //getNewsFeedFromDatabase()
-            }
-            catch (e: Exception)
-            {
-                data.value = NewsFeed().apply { strTitle = "Error" }
-            }
+        return NewsFeed().apply {
+            strTitle = "News Feed"
+            listOfNews = list
+            Timber.e("Default")
         }
     }
 
-    // This function inserts new NewsFeed into Local Database
-    private suspend fun insertToDatabase(result: NewsFeed)
-    {
-        withContext(Dispatchers.IO) {
-            for (news in result.listOfNews) {
-                database.insert(news)
+    private suspend fun updateDataFromRemoteDataSource() {
+        // Fetch Latest Data from Web.
+        // if Success, Delete Data from Local Database.
+        // Save Latest Data to Local Database.
+        // If Error, Throw Exception.
+
+        if(forceUpdate)
+        {
+            withContext(Dispatchers.IO) {
+                val remoteNews = remoteDataSource.getAllNews()
+                Timber.e("Call Compete")
+                localDataSource.deleteAllNews()
+                remoteNews.forEach { news -> localDataSource.saveAllNews(news) }
+                Timber.e("Update : $forceUpdate")
+                forceUpdate = false
             }
         }
+
+
+
+        // Webservice Fail TOBEDONE
+    }
+
+    fun cancel()
+    {
+        job.cancel()
     }
 }

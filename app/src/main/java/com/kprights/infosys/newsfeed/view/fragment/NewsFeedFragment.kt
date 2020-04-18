@@ -33,7 +33,7 @@ class NewsFeedFragment: Fragment()
 
         // Set Database Access Object for NewsFeed
         val application = requireNotNull(this.activity).application
-        val newsFeedViewModelFactory = NewsFeedViewModelFactory(this, DatabaseService.getInstance(application).newsFeedDao)
+        val newsFeedViewModelFactory = NewsFeedViewModelFactory(DatabaseService.getInstance(application).newsFeedDao)
         val viewModel = ViewModelProvider(this, newsFeedViewModelFactory).get(NewsFeedViewModel::class.java)
 
         // Giving the binding access to the ViewModel
