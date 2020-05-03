@@ -2,7 +2,7 @@ package com.kprights.infosys.newsfeed.viewmodel
 
 import androidx.lifecycle.LiveData
 import com.kprights.infosys.newsfeed.common.NewsFeedDao
-import com.kprights.infosys.newsfeed.model.News
+import com.kprights.infosys.newsfeed.model.NewsFeed
 
 
 /**
@@ -15,7 +15,7 @@ import com.kprights.infosys.newsfeed.model.News
 
 class LocalDataSource(private val database: NewsFeedDao) : IDataSource {
 
-    fun getAllNews(): LiveData<List<News>> {
+    fun getAllNews(): LiveData<NewsFeed> {
         return database.getAllNews()
     }
 
@@ -23,7 +23,7 @@ class LocalDataSource(private val database: NewsFeedDao) : IDataSource {
         database.clear()
     }
 
-    fun saveAllNews(news: News) {
-        database.insert(news)
+    fun saveAllNews(newsFeed: NewsFeed) {
+        database.insert(newsFeed)
     }
 }

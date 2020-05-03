@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kprights.infosys.newsfeed.R
 import com.kprights.infosys.newsfeed.model.News
 import com.kprights.infosys.newsfeed.view.fragment.NewsFeedListAdapter
-import com.kprights.infosys.newsfeed.viewmodel.NewsFeedViewModel
+import com.kprights.infosys.newsfeed.viewmodel.NewsFeedRepository
 
 
 /**
@@ -25,21 +25,21 @@ fun bindRecyclerView(recyclerView: RecyclerView, data: List<News>?) {
 }
 
 @BindingAdapter("apiStatus")
-fun bindStatus(statusImageView: ImageView, status: NewsFeedViewModel.ApiStatus?) {
+fun bindStatus(statusImageView: ImageView, status: NewsFeedRepository.ApiStatus?) {
     when (status) {
-        NewsFeedViewModel.ApiStatus.LOADING ->
+        NewsFeedRepository.ApiStatus.LOADING ->
         {
             statusImageView.visibility = View.VISIBLE
             statusImageView.setImageResource(R.drawable.loading_animation)
         }
 
-        NewsFeedViewModel.ApiStatus.ERROR ->
+        NewsFeedRepository.ApiStatus.ERROR ->
         {
             statusImageView.visibility = View.VISIBLE
             statusImageView.setImageResource(R.drawable.ic_connection_error)
         }
 
-        NewsFeedViewModel.ApiStatus.DONE ->
+        NewsFeedRepository.ApiStatus.DONE ->
         {
             statusImageView.visibility = View.GONE
         }

@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.kprights.infosys.newsfeed.common.DatabaseService
 import com.kprights.infosys.newsfeed.databinding.FragmentNewsFeedBinding
 import com.kprights.infosys.newsfeed.viewmodel.NewsFeedViewModel
 import com.kprights.infosys.newsfeed.viewmodel.NewsFeedViewModelFactory
@@ -33,7 +32,7 @@ class NewsFeedFragment: Fragment()
 
         // Set Database Access Object for NewsFeed
         val application = requireNotNull(this.activity).application
-        val newsFeedViewModelFactory = NewsFeedViewModelFactory(DatabaseService.getInstance(application).newsFeedDao)
+        val newsFeedViewModelFactory = NewsFeedViewModelFactory(application)
         val viewModel = ViewModelProvider(this, newsFeedViewModelFactory).get(NewsFeedViewModel::class.java)
 
         // Giving the binding access to the ViewModel

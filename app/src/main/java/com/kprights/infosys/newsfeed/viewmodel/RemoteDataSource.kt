@@ -1,7 +1,7 @@
 package com.kprights.infosys.newsfeed.viewmodel
 
 import com.kprights.infosys.newsfeed.common.WebService
-import com.kprights.infosys.newsfeed.model.News
+import com.kprights.infosys.newsfeed.model.NewsFeed
 import timber.log.Timber
 
 
@@ -15,11 +15,11 @@ import timber.log.Timber
 
 class RemoteDataSource : IDataSource {
 
-    suspend fun getAllNews(): List<News> {
+    suspend fun getAllNews(): NewsFeed {
 
         val deferred = WebService.getNewsFeed()
         val newsFeed = deferred.await()
         Timber.e("Remote Call")
-        return newsFeed.listOfNews
+        return newsFeed
     }
 }

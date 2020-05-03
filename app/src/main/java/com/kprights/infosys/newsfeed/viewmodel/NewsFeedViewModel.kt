@@ -1,10 +1,10 @@
 package com.kprights.infosys.newsfeed.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import com.kprights.infosys.newsfeed.common.NewsFeedDao
+import com.kprights.infosys.newsfeed.common.DatabaseService
 import com.kprights.infosys.newsfeed.model.NewsFeed
 
 
@@ -17,18 +17,13 @@ import com.kprights.infosys.newsfeed.model.NewsFeed
  */
 
 class NewsFeedViewModel(
-    database: NewsFeedDao
-) : ViewModel()
+    application: Application
+) : AndroidViewModel(application)
 {
-    enum class ApiStatus { LOADING, ERROR, DONE }
-
-    private var newsFeedRepository: NewsFeedRepository = NewsFeedRepository(database)
+    private var newsFeedRepository: NewsFeedRepository = NewsFeedRepository(DatabaseService.getInstance(application).newsFeedDao)
     val newsFeed: LiveData<NewsFeed> = Transformations.map(newsFeedRepository.newsFeed){ it }
-    val newsTitle: LiveData<String> = Transformations.map(newsFeed){ newFeed -> newFeed.strTitle }
-
-    private val _status = MutableLiveData<ApiStatus>()
-    val status: LiveData<ApiStatus>
-        get() = _status
+    val newsTitle: LiveData<String> = Transformations.map(newsFeed){ "News Feed" }
+    val status: LiveData<NewsFeedRepository.ApiStatus> = Transformations.map(newsFeedRepository.status){ it }
 
     override fun onCleared() {
         super.onCleared()

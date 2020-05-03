@@ -1,8 +1,8 @@
 package com.kprights.infosys.newsfeed.viewmodel
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.kprights.infosys.newsfeed.common.NewsFeedDao
 
 
 /**
@@ -14,12 +14,12 @@ import com.kprights.infosys.newsfeed.common.NewsFeedDao
  */
 
 class NewsFeedViewModelFactory(
-    private val dataSource: NewsFeedDao
+    private val application: Application
 ) : ViewModelProvider.Factory {
     @Suppress("unchecked_cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(NewsFeedViewModel::class.java)) {
-            return NewsFeedViewModel(dataSource) as T
+            return NewsFeedViewModel(application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
