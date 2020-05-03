@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import com.kprights.infosys.newsfeed.common.NewsFeedDao
 import com.kprights.infosys.newsfeed.model.NewsFeed
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 /**
  * Copyright (c) 2020 for KPrights
@@ -29,9 +28,7 @@ class NewsFeedRepository(database: NewsFeedDao)
     val status: MutableLiveData<ApiStatus> = MutableLiveData<ApiStatus>()
 
     init {
-        Timber.e("Repo : Start")
         updateDataFromRemoteDataSource()
-        Timber.e("Repo : End")
     }
 
     private fun updateDataFromRemoteDataSource() {
@@ -44,26 +41,21 @@ class NewsFeedRepository(database: NewsFeedDao)
 
             try
             {
-                Timber.e("Repo : 1")
+
                 status.value = ApiStatus.LOADING
                 val newsFeed = remoteDataSource.getAllNews()
-                Timber.e("Repo : 2")
+
                 withContext(Dispatchers.IO)
                 {
-                    Timber.e("Repo : 3")
                     localDataSource.deleteAllNews()
-                    Timber.e("Repo : 4")
                     localDataSource.saveAllNews(newsFeed)
-                    Timber.e("Repo : 5")
                 }
 
                 status.value = ApiStatus.DONE
-                Timber.e("Repo : 6")
             }
             catch (e: Exception)
             {
                 status.value = ApiStatus.ERROR
-                Timber.e("Repo : EXC : ${e.message}")
             }
         }
     }
