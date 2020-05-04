@@ -14,7 +14,7 @@ import kotlinx.coroutines.*
  * Time : 11:20 AM
  */
 
-class NewsFeedRepository(database: NewsFeedDao)
+class NewsFeedRepository(database: NewsFeedDao, private val dispatcher: CoroutineDispatcher)
 {
     enum class ApiStatus { LOADING, ERROR, DONE }
 
@@ -22,41 +22,57 @@ class NewsFeedRepository(database: NewsFeedDao)
     private val remoteDataSource = RemoteDataSource()
 
     private val job = Job()
-    private val scope = CoroutineScope(job + Dispatchers.Main)
+    private val scope = CoroutineScope(job + dispatcher)
 
     val newsFeed: LiveData<NewsFeed> = localDataSource.getAllNews()
     val status: MutableLiveData<ApiStatus> = MutableLiveData<ApiStatus>()
 
-    init {
-        updateDataFromRemoteDataSource()
+    init { updateDataFromRemoteDataSource() }
+
+    // Fetch Latest Data from Web.
+    // if Success, Delete Data from Local Database.
+    // Save Latest Data to Local Database.
+    // If Error, Throw Exception.
+    fun updateDataFromRemoteDataSource()
+    {
+        scope.launch(dispatcher) {
+            val newsFeed = fetchDataFromRemote()
+
+            newsFeed?.let {
+                deleteDataFromDatabase()
+                insertDataIntoDatabase(it)
+            }
+        }
     }
 
-    private fun updateDataFromRemoteDataSource() {
-        // Fetch Latest Data from Web.
-        // if Success, Delete Data from Local Database.
-        // Save Latest Data to Local Database.
-        // If Error, Throw Exception.
+    suspend fun fetchDataFromRemote() : NewsFeed?
+    {
+        try
+        {
+            status.value = ApiStatus.LOADING
+            return remoteDataSource.getAllNews()
+        }
+        catch (e: Exception)
+        {
+            status.value = ApiStatus.ERROR
+        }
 
-        scope.launch {
+        return null
+    }
 
-            try
-            {
+    suspend fun deleteDataFromDatabase()
+    {
+        withContext(dispatcher)
+        {
+            localDataSource.deleteAllNews()
+        }
+    }
 
-                status.value = ApiStatus.LOADING
-                val newsFeed = remoteDataSource.getAllNews()
-
-                withContext(Dispatchers.IO)
-                {
-                    localDataSource.deleteAllNews()
-                    localDataSource.saveAllNews(newsFeed)
-                }
-
-                status.value = ApiStatus.DONE
-            }
-            catch (e: Exception)
-            {
-                status.value = ApiStatus.ERROR
-            }
+    suspend fun insertDataIntoDatabase(newsFeed: NewsFeed)
+    {
+        withContext(dispatcher)
+        {
+            localDataSource.saveAllNews(newsFeed)
         }
     }
 

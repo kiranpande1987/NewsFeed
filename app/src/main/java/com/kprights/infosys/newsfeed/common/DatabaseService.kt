@@ -3,6 +3,7 @@ package com.kprights.infosys.newsfeed.common
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.kprights.infosys.newsfeed.model.Converters
 import com.kprights.infosys.newsfeed.model.NewsFeed
 
 
@@ -15,7 +16,7 @@ import com.kprights.infosys.newsfeed.model.NewsFeed
  */
 
 @Database(entities = [NewsFeed::class], version = 1, exportSchema = false)
-@TypeConverters(NewsFeed.Converters::class)
+@TypeConverters(Converters::class)
 abstract class DatabaseService : RoomDatabase()
 {
     abstract val newsFeedDao: NewsFeedDao
@@ -48,14 +49,11 @@ abstract class DatabaseService : RoomDatabase()
 @Dao
 interface NewsFeedDao
 {
-    @Insert
-    fun insert(newsFeed: NewsFeed)
-
-    @Update
-    fun update(newsFeed: NewsFeed)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(newsFeed: NewsFeed)
 
     @Query("DELETE FROM NewsFeed")
-    fun clear()
+    suspend fun clear()
 
     @Query("SELECT * FROM NewsFeed")
     fun getAllNews(): LiveData<NewsFeed>

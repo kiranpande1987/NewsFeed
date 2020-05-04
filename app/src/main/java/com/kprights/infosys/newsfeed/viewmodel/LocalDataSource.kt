@@ -19,11 +19,11 @@ class LocalDataSource(private val database: NewsFeedDao) : IDataSource {
         return database.getAllNews()
     }
 
-    fun deleteAllNews() {
+    suspend fun deleteAllNews() {
         database.clear()
     }
 
-    fun saveAllNews(newsFeed: NewsFeed) {
+    suspend fun saveAllNews(newsFeed: NewsFeed) {
         database.insert(newsFeed)
     }
 }
