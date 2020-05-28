@@ -15,15 +15,19 @@ import com.kprights.infosys.newsfeed.model.NewsFeed
 
 class LocalDataSource(private val database: NewsFeedDao) : IDataSource {
 
-    fun getAllNews(): LiveData<NewsFeed> {
+    override fun getAllNews(): LiveData<NewsFeed> {
         return database.getAllNews()
     }
 
-    suspend fun deleteAllNews() {
+    override suspend fun deleteAllNews() {
         database.clear()
     }
 
-    suspend fun saveAllNews(newsFeed: NewsFeed) {
+    override suspend fun saveAllNews(newsFeed: NewsFeed) {
         database.insert(newsFeed)
+    }
+
+    override suspend fun getNewsFromRemote(): NewsFeed {
+        TODO("Not yet implemented")
     }
 }

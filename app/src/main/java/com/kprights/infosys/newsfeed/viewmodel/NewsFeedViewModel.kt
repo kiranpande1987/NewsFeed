@@ -1,12 +1,9 @@
 package com.kprights.infosys.newsfeed.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import com.kprights.infosys.newsfeed.common.DatabaseService
+import androidx.lifecycle.ViewModel
 import com.kprights.infosys.newsfeed.model.NewsFeed
-import kotlinx.coroutines.Dispatchers
 
 
 /**
@@ -18,10 +15,9 @@ import kotlinx.coroutines.Dispatchers
  */
 
 class NewsFeedViewModel(
-    application: Application
-) : AndroidViewModel(application)
+    private val newsFeedRepository: NewsFeedRepository
+) : ViewModel()
 {
-    private var newsFeedRepository: NewsFeedRepository = NewsFeedRepository(DatabaseService.getInstance(application).newsFeedDao, Dispatchers.Main)
     val newsFeed: LiveData<NewsFeed> = Transformations.map(newsFeedRepository.newsFeed){ it }
     val newsTitle: LiveData<String> = Transformations.map(newsFeed){ "News Feed" }
     val status: LiveData<NewsFeedRepository.ApiStatus> = Transformations.map(newsFeedRepository.status){ it }

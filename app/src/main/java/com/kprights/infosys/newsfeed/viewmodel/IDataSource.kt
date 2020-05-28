@@ -1,5 +1,8 @@
 package com.kprights.infosys.newsfeed.viewmodel
 
+import androidx.lifecycle.LiveData
+import com.kprights.infosys.newsfeed.model.NewsFeed
+
 
 /**
  * Copyright (c) 2020 for KPrights
@@ -10,5 +13,9 @@ package com.kprights.infosys.newsfeed.viewmodel
  */
 
 interface IDataSource {
+    fun getAllNews(): LiveData<NewsFeed>
+    suspend fun deleteAllNews()
+    suspend fun saveAllNews(newsFeed: NewsFeed)
 
+    suspend fun getNewsFromRemote(): NewsFeed
 }

@@ -1,19 +1,20 @@
 package com.kprights.infosys.newsfeed.viewmodel
 
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.kprights.infosys.newsfeed.common.DatabaseService
+import com.kprights.infosys.newsfeed.MainCoroutineRule
+import com.kprights.infosys.newsfeed.local.source.FakeDataSource
+import com.kprights.infosys.newsfeed.model.News
+import com.kprights.infosys.newsfeed.model.NewsFeed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
-import org.junit.After
+import kotlinx.coroutines.test.runBlockingTest
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.core.IsEqual
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
 /**
  * Copyright (c) 2020 for KPrights
@@ -24,44 +25,81 @@ import org.junit.runner.RunWith
  * Time : 1:08 AM
  */
 
-@RunWith(AndroidJUnit4::class)
+@ExperimentalCoroutinesApi
+@RunWith(JUnit4::class)
 class NewsFeedRepositoryTest
 {
-    @ExperimentalCoroutinesApi
-    val testCoroutineDispatcher = TestCoroutineDispatcher()
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
 
-    @ExperimentalCoroutinesApi
+    val local = NewsFeed().apply {
+        id = 100
+        strTitle = "Sakal"
+        listOfNews.add(
+            News(101, "India", "Pandemic Situation", "")
+        )
+        listOfNews.add(
+            News(102, "Maharashtra", "More Pandemic Situation", "")
+        )
+    }
+
+    val remote = NewsFeed().apply {
+        id = 100
+        strTitle = "Sakal"
+        listOfNews.add(
+            News(103, "Pune", "Pandemic Situation", "")
+        )
+    }
+
+    private lateinit var remoteDataSource: FakeDataSource
+    private lateinit var localDataSource: FakeDataSource
+
+    // Class under test
+    private lateinit var newsFeedRepository: NewsFeedRepository
+
     @Before
-    fun setup()
-    {
-        Dispatchers.setMain(testCoroutineDispatcher)
+    fun createRepository() {
+        remoteDataSource = FakeDataSource(remote)
+        localDataSource = FakeDataSource(local)
+        // Get a reference to the class under test
+        newsFeedRepository = NewsFeedRepository(
+            remoteDataSource = remoteDataSource,
+            localDataSource = localDataSource,
+            ioDispatcher = Dispatchers.Main
+        )
     }
 
     @ExperimentalCoroutinesApi
     @Test
-    fun testNewsFeedRepositoryTest() = runBlocking {
+    fun getTasks_requestsAllNewsFromRemoteDataSource() = mainCoroutineRule.runBlockingTest {
+        // When tasks are requested from the tasks repository
+        val newsFeedFromRemote = newsFeedRepository.fetchDataFromRemote()
 
-        val database = DatabaseService.getInstance(ApplicationProvider.getApplicationContext()).newsFeedDao
-        val repository = NewsFeedRepository(database, testCoroutineDispatcher)
-
-        val newsFeed = repository.fetchDataFromRemote()
-
-        Assert.assertEquals(true, (newsFeed != null))
-        Assert.assertEquals("About Canada", newsFeed?.strTitle)
-
-        repository.deleteDataFromDatabase()
-
-        Assert.assertEquals(true, (repository.newsFeed.value == null))
-
-        repository.insertDataIntoDatabase(newsFeed!!)
+        // Then tasks are loaded from the remote data source
+        assertThat(newsFeedFromRemote, IsEqual(remote))
     }
 
     @ExperimentalCoroutinesApi
-    @After
-    fun tear()
-    {
-        Dispatchers.resetMain()
-        testCoroutineDispatcher.cleanupTestCoroutines()
+    @Test
+    fun getTasks_deleteAllNewsFromLocalDataSource() = mainCoroutineRule.runBlockingTest {
+        // When tasks are requested from the tasks repository
+        Assert.assertEquals(local.id, 100)
+        Assert.assertEquals(local.strTitle, "Sakal")
+        Assert.assertEquals(local.listOfNews.size, 2)
+
+        newsFeedRepository.deleteDataFromDatabase()
+
+        // Then tasks are loaded from the remote data source
+        Assert.assertEquals(local.id, -1)
+        Assert.assertEquals(local.strTitle, "")
+        Assert.assertEquals(local.listOfNews.size, 0)
     }
 
+    @ExperimentalCoroutinesApi
+    @Test
+    fun getTasks_saveAllNewsToLocalDataSource() = mainCoroutineRule.runBlockingTest {
+        val newsFeedFromRemote = newsFeedRepository.fetchDataFromRemote()
+
+        newsFeedRepository.insertDataIntoDatabase(newsFeedFromRemote!!)
+    }
 }

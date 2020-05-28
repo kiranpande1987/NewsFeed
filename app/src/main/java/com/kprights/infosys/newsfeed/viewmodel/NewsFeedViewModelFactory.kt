@@ -3,6 +3,8 @@ package com.kprights.infosys.newsfeed.viewmodel
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.kprights.infosys.newsfeed.common.DatabaseService
+import kotlinx.coroutines.Dispatchers
 
 
 /**
@@ -19,7 +21,18 @@ class NewsFeedViewModelFactory(
     @Suppress("unchecked_cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(NewsFeedViewModel::class.java)) {
-            return NewsFeedViewModel(application) as T
+
+            val localDataSource =
+                LocalDataSource(DatabaseService.getInstance(application).newsFeedDao)
+            val remoteDataSource = RemoteDataSource()
+
+            var newsFeedRepository: NewsFeedRepository = NewsFeedRepository(
+                localDataSource = localDataSource,
+                remoteDataSource = remoteDataSource,
+                ioDispatcher = Dispatchers.Main
+            )
+
+            return NewsFeedViewModel(newsFeedRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

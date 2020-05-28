@@ -57,4 +57,7 @@ interface NewsFeedDao
 
     @Query("SELECT * FROM NewsFeed")
     fun getAllNews(): LiveData<NewsFeed>
+
+    @Query("SELECT * FROM NewsFeed")
+    fun getNewsFeed(): NewsFeed
 }

@@ -16,7 +16,7 @@ import com.google.gson.annotations.SerializedName
 @Entity
 data class NewsFeed(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0L,
+    var id: Long = 0L,
     @SerializedName("title") var strTitle : String = "News Feed",
-    @SerializedName("rows") var listOfNews : List<News> = listOf<News>()
+    @SerializedName("rows") var listOfNews: MutableList<News> = emptyList<News>().toMutableList()
 )

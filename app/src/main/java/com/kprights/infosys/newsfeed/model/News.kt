@@ -20,7 +20,7 @@ import kotlinx.android.parcel.Parcelize
 data class News(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
-    @SerializedName("title") val strTitle : String? = "",
-    @SerializedName("description") val strDescription : String? = "",
-    @SerializedName("imageHref") val strImageUrl : String? = ""
+    @SerializedName("title") var strTitle: String? = "",
+    @SerializedName("description") var strDescription: String? = "",
+    @SerializedName("imageHref") var strImageUrl: String? = ""
 ) : Parcelable

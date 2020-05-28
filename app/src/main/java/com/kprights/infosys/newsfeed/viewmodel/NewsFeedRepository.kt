@@ -2,7 +2,6 @@ package com.kprights.infosys.newsfeed.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.kprights.infosys.newsfeed.common.NewsFeedDao
 import com.kprights.infosys.newsfeed.model.NewsFeed
 import kotlinx.coroutines.*
 
@@ -14,17 +13,18 @@ import kotlinx.coroutines.*
  * Time : 11:20 AM
  */
 
-class NewsFeedRepository(database: NewsFeedDao, private val dispatcher: CoroutineDispatcher)
+class NewsFeedRepository(
+    private val localDataSource: IDataSource,
+    private val remoteDataSource: IDataSource,
+    private val ioDispatcher: CoroutineDispatcher
+)
 {
     enum class ApiStatus { LOADING, ERROR, DONE }
 
-    private val localDataSource = LocalDataSource(database)
-    private val remoteDataSource = RemoteDataSource()
-
     private val job = Job()
-    private val scope = CoroutineScope(job + dispatcher)
+    private val scope = CoroutineScope(job + ioDispatcher)
 
-    val newsFeed: LiveData<NewsFeed> = localDataSource.getAllNews()
+    var newsFeed: LiveData<NewsFeed> = localDataSource.getAllNews()
     val status: MutableLiveData<ApiStatus> = MutableLiveData<ApiStatus>()
 
     init { updateDataFromRemoteDataSource() }
@@ -35,12 +35,15 @@ class NewsFeedRepository(database: NewsFeedDao, private val dispatcher: Coroutin
     // If Error, Throw Exception.
     fun updateDataFromRemoteDataSource()
     {
-        scope.launch(dispatcher) {
+        scope.launch(ioDispatcher) {
+
+            //getlocal()
             val newsFeed = fetchDataFromRemote()
 
             newsFeed?.let {
                 deleteDataFromDatabase()
                 insertDataIntoDatabase(it)
+                status.postValue(ApiStatus.DONE)
             }
         }
     }
@@ -49,12 +52,12 @@ class NewsFeedRepository(database: NewsFeedDao, private val dispatcher: Coroutin
     {
         try
         {
-            status.value = ApiStatus.LOADING
-            return remoteDataSource.getAllNews()
+            status.postValue(ApiStatus.LOADING)
+            return remoteDataSource.getNewsFromRemote()
         }
         catch (e: Exception)
         {
-            status.value = ApiStatus.ERROR
+            status.postValue(ApiStatus.ERROR)
         }
 
         return null
@@ -62,7 +65,7 @@ class NewsFeedRepository(database: NewsFeedDao, private val dispatcher: Coroutin
 
     suspend fun deleteDataFromDatabase()
     {
-        withContext(dispatcher)
+        withContext(ioDispatcher)
         {
             localDataSource.deleteAllNews()
         }
@@ -70,7 +73,7 @@ class NewsFeedRepository(database: NewsFeedDao, private val dispatcher: Coroutin
 
     suspend fun insertDataIntoDatabase(newsFeed: NewsFeed)
     {
-        withContext(dispatcher)
+        withContext(ioDispatcher)
         {
             localDataSource.saveAllNews(newsFeed)
         }
