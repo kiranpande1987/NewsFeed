@@ -32,7 +32,7 @@ class NewsFeedRepositoryTest
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
-    val local = NewsFeed().apply {
+    private val local = NewsFeed().apply {
         id = 100
         strTitle = "Sakal"
         listOfNews.add(
@@ -43,7 +43,7 @@ class NewsFeedRepositoryTest
         )
     }
 
-    val remote = NewsFeed().apply {
+    private val remote = NewsFeed().apply {
         id = 100
         strTitle = "Sakal"
         listOfNews.add(

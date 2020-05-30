@@ -73,3 +73,13 @@ v
 Fapp/src/androidTest/java/com/kprights/infosys/newsfeed/EndToEndTest.kt,4/7/470efbcd7216c6fde6dffc8a482c9d8a70793684
 p
 @app/src/main/java/com/kprights/infosys/newsfeed/common/Result.kt,d/6/d66ae66b286fd654d58273b822871842183294e2
+~
+Napp/src/test/java/com/kprights/infosys/newsfeed/local/source/FakeDataSource.kt,2/7/27ccf2a0d87be98da3ebf9f223d1885b5ad84f46
+t
+Dapp/src/test/java/com/kprights/infosys/newsfeed/MainCoroutineRule.kt,a/5/a55c3c4f16c63cd396ee50c780fb21ded42d7e70
+s
+Capp/src/test/java/com/kprights/infosys/newsfeed/LiveDataTestUtil.kt,4/3/43806c4be35c6fb44eb90a1cd6db3fc232e08801
+A
+gradle.properties,2/a/2afbb999f001938c88fa43fc2ef52abf0f8213e4
+X
+(gradle/wrapper/gradle-wrapper.properties,f/b/fbe448ebfc3eb2d4e308f6b8b043666f5b57235e
