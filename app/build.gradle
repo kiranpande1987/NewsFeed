@@ -40,9 +40,10 @@ android {
         jvmTarget = "1.8"
     }
 
-    // Enables data binding.
-    dataBinding {
-        enabled = true
+    buildFeatures{
+        dataBinding = true
+        // for view binding :
+        // viewBinding = true
     }
 }
 

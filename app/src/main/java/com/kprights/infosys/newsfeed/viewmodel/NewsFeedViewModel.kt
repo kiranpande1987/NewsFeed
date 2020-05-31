@@ -15,12 +15,12 @@ import com.kprights.infosys.newsfeed.model.NewsFeed
  */
 
 class NewsFeedViewModel(
-    private val newsFeedRepository: NewsFeedRepository
-) : ViewModel()
-{
-    val newsFeed: LiveData<NewsFeed> = Transformations.map(newsFeedRepository.newsFeed){ it }
-    val newsTitle: LiveData<String> = Transformations.map(newsFeed){ "News Feed" }
-    val status: LiveData<NewsFeedRepository.ApiStatus> = Transformations.map(newsFeedRepository.status){ it }
+    private val newsFeedRepository: INewsFeedRepository
+) : ViewModel() {
+    val newsFeed: LiveData<NewsFeed> = Transformations.map(newsFeedRepository.newsFeed) { it }
+    val newsTitle: LiveData<String> = Transformations.map(newsFeed) { newsFeed.value?.strTitle }
+    val status: LiveData<INewsFeedRepository.ApiStatus> =
+        Transformations.map(newsFeedRepository.status) { it }
 
     override fun onCleared() {
         super.onCleared()
