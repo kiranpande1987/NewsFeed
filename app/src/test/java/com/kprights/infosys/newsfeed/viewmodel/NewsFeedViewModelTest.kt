@@ -24,7 +24,7 @@ class NewsFeedViewModelTest {
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
-    private lateinit var repository: INewsFeedRepository
+    private lateinit var repository: FakeNewsFeedRepository
 
     // Subject under test
     private lateinit var viewModel: NewsFeedViewModel
@@ -43,6 +43,10 @@ class NewsFeedViewModelTest {
 
     @Test
     fun checkDataAndStatus() {
+
+        repository.setReturnError(false)
+        repository.updateDataFromRemoteDataSource()
+
         val newsFeed = viewModel.newsFeed.getOrAwaitValue()
         val status = viewModel.status.getOrAwaitValue()
         val title = viewModel.newsTitle.getOrAwaitValue()
@@ -54,5 +58,15 @@ class NewsFeedViewModelTest {
         Assert.assertEquals(newsFeed.id, 100)
         Assert.assertEquals(newsFeed.strTitle, "Sakal")
         Assert.assertEquals(newsFeed.listOfNews.size, 1)
+    }
+
+    @Test
+    fun checkErrorStatus() {
+        repository.setReturnError(true)
+        repository.updateDataFromRemoteDataSource()
+
+        val status = viewModel.status.getOrAwaitValue()
+
+        Assert.assertEquals(status, INewsFeedRepository.ApiStatus.ERROR)
     }
 }

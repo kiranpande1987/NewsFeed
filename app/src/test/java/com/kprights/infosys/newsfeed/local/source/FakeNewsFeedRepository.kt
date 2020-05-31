@@ -18,6 +18,13 @@ import kotlinx.coroutines.Job
  */
 
 class FakeNewsFeedRepository : INewsFeedRepository {
+
+    private var shouldReturnError = false
+
+    fun setReturnError(value: Boolean) {
+        shouldReturnError = value
+    }
+
     override val job = Job()
     override val scope = CoroutineScope(job)
 
@@ -25,22 +32,22 @@ class FakeNewsFeedRepository : INewsFeedRepository {
     override val status: MutableLiveData<INewsFeedRepository.ApiStatus> =
         MutableLiveData<INewsFeedRepository.ApiStatus>()
 
-    init {
-        updateDataFromRemoteDataSource()
-    }
-
     override fun updateDataFromRemoteDataSource() {
 
-        val remoteDataSource = NewsFeed().apply {
-            id = 100
-            strTitle = "Sakal"
-            listOfNews.add(
-                News(103, "Pune", "Pandemic Situation", "")
-            )
-        }
+        if (shouldReturnError) {
+            status.postValue(INewsFeedRepository.ApiStatus.ERROR)
+        } else {
+            val remoteDataSource = NewsFeed().apply {
+                id = 100
+                strTitle = "Sakal"
+                listOfNews.add(
+                    News(103, "Pune", "Pandemic Situation", "")
+                )
+            }
 
-        (newsFeed as MutableLiveData).postValue(remoteDataSource)
-        status.postValue(INewsFeedRepository.ApiStatus.DONE)
+            (newsFeed as MutableLiveData).postValue(remoteDataSource)
+            status.postValue(INewsFeedRepository.ApiStatus.DONE)
+        }
     }
 
     override suspend fun fetchDataFromRemote(): NewsFeed? {
