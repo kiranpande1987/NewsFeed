@@ -1,4 +1,4 @@
-package com.kprights.infosys.newsfeed
+package com.kprights.infosys.newsfeed.viewmodel
 
 import com.google.common.base.Verify
 import com.kprights.infosys.newsfeed.di.newsModule
