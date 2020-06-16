@@ -6,11 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.kprights.infosys.newsfeed.databinding.FragmentNewsFeedBinding
 import com.kprights.infosys.newsfeed.viewmodel.NewsFeedViewModel
-import com.kprights.infosys.newsfeed.viewmodel.NewsFeedViewModelFactory
+import org.koin.android.viewmodel.ext.android.getViewModel
 
 
 /**
@@ -30,19 +29,14 @@ class NewsFeedFragment: Fragment()
         // Allows Data Binding to Observe LiveData with the lifecycle of this Fragment
         binding.lifecycleOwner = this
 
-        // Set Database Access Object for NewsFeed
-        val application = requireNotNull(this.activity).application
-        val newsFeedViewModelFactory = NewsFeedViewModelFactory(application)
-        val viewModel = ViewModelProvider(this, newsFeedViewModelFactory).get(NewsFeedViewModel::class.java)
-
         // Giving the binding access to the ViewModel
-        binding.viewModel = viewModel
+        binding.viewModel = getViewModel()
 
         binding.recyclerViewForNewsFeed.adapter = NewsFeedListAdapter(NewsFeedListAdapter.OnClickListener {
                 this.findNavController().navigate(NewsFeedFragmentDirections.actionShowDetail(it))
         })
 
-        viewModel.newsTitle.observe(viewLifecycleOwner, Observer {
+        (binding.viewModel as NewsFeedViewModel).newsTitle.observe(viewLifecycleOwner, Observer {
             activity?.title = it
         })
 

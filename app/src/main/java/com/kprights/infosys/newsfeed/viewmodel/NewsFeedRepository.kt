@@ -16,7 +16,7 @@ import kotlinx.coroutines.*
 class NewsFeedRepository(
     private val localDataSource: IDataSource,
     private val remoteDataSource: IDataSource,
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : INewsFeedRepository {
 
     override val job = Job()

@@ -5,6 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs"
 apply plugin: "jacoco"
 apply plugin: "com.vanniktech.android.junit.jacoco"
+apply plugin: 'koin'
 
 android {
     compileSdkVersion 29
@@ -74,6 +75,12 @@ dependencies {
     implementation "android.arch.navigation:navigation-fragment-ktx:$version_navigation"
     implementation "android.arch.navigation:navigation-ui-ktx:$version_navigation"
 
+    // DI - Koin
+    implementation "org.koin:koin-android:$koin_version"
+    implementation "org.koin:koin-android-scope:$koin_version"
+    implementation "org.koin:koin-android-viewmodel:$koin_version"
+    testImplementation "org.koin:koin-test:$koin_version"
+
     // Unit Testing
     testImplementation 'junit:junit:4.13'
     testImplementation "androidx.test:core-ktx:1.2.0"
@@ -84,6 +91,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.19.0'
     testImplementation "androidx.arch.core:core-testing:2.1.0"
 
+
     // UI Testing
     androidTestImplementation "junit:junit:4.13"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -93,6 +101,11 @@ dependencies {
     androidTestImplementation "org.mockito:mockito-core:2.19.0"
     androidTestImplementation "com.linkedin.dexmaker:dexmaker-mockito:2.12.1"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:3.3.0-rc01"
+
+
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:core:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
 
     // Webservice
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
