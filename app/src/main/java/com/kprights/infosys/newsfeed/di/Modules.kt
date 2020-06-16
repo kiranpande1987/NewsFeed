@@ -22,8 +22,7 @@ val newsModule = module {
     factory { News() }
 }
 
-val newsFeedViewModel = module {
-
+val repositoryModule = module {
     single { DatabaseService.getInstance(androidContext()).newsFeedDao }
 
     single { LocalDataSource(get()) }
@@ -35,7 +34,11 @@ val newsFeedViewModel = module {
             get<RemoteDataSource>()
         )
     }
+}
+
+val newsFeedViewModel = module {
+
     viewModel { NewsFeedViewModel(get()) }
 }
 
-val koinModules = listOf(newsModule, newsFeedViewModel)
+val koinModules = listOf(newsModule, repositoryModule, newsFeedViewModel)
