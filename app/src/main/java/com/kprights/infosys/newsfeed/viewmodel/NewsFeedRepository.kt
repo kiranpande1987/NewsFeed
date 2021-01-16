@@ -1,5 +1,6 @@
 package com.kprights.infosys.newsfeed.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kprights.infosys.newsfeed.model.NewsFeed
@@ -60,6 +61,7 @@ class NewsFeedRepository(
 
     suspend fun deleteDataFromDatabase()
     {
+        Log.e("Test", "Test")
         withContext(ioDispatcher)
         {
             localDataSource.deleteAllNews()
