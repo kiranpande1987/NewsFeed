@@ -23,7 +23,7 @@ class NewsDetailFragment: Fragment()
         val binding = NewsDetailFragmentBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
-        val news = NewsDetailFragmentArgs.fromBundle(arguments!!).news
+        val news = NewsDetailFragmentArgs.fromBundle(requireArguments()).news
         binding.news = news
 
         return binding.root
